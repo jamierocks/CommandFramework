@@ -126,8 +126,10 @@ public class CommandFramework implements CommandExecutor {
                     System.out.println("Unable to register command " + m.getName() + ". Unexpected method arguments");
                     continue;
                 }
-                registerCommand(command, command.name(), m, obj);
                 for (String alias : command.aliases()) {
+                    if (command.parent() != "") {
+                        alias = command.parent() + "." + alias;
+                    }
                     registerCommand(command, alias, m, obj);
                 }
             } else if (m.getAnnotation(TabComplete.class) != null) {
