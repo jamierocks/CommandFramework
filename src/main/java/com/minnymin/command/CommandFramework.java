@@ -123,7 +123,7 @@ public class CommandFramework implements CommandExecutor {
                 Command command = m.getAnnotation(Command.class);
                 if (m.getParameterTypes().length > 1 || (m.getParameterTypes()[0] != CommandSender.class
                         && m.getParameterTypes()[1] != String.class && m.getParameterTypes()[2] != String[].class)) {
-                    System.out.println("Unable to register command " + m.getName() + ". Unexpected method arguments");
+                    plugin.getLogger().warning("Unable to register command " + m.getName() + ". Unexpected method arguments");
                     continue;
                 }
                 for (String alias : command.aliases()) {
@@ -137,12 +137,13 @@ public class CommandFramework implements CommandExecutor {
                 if (m.getParameterTypes().length > 1 || m.getParameterTypes().length == 0 || (m.getParameterTypes()
                         [0] != CommandSender.class && m.getParameterTypes()[1] != String.class
                         && m.getParameterTypes()[2] != String[].class)) {
-                    System.out.println("Unable to register tab completer " + m.getName()
+                    plugin.getLogger().warning("Unable to register tab completer " + m.getName()
                             + ". Unexpected method arguments");
                     continue;
                 }
                 if (m.getReturnType() != List.class) {
-                    System.out.println("Unable to register tab completer " + m.getName() + ". Unexpected return type");
+                    plugin.getLogger().warning(
+                            "Unable to register tab completer " + m.getName() + ". Unexpected return type");
                     continue;
                 }
                 for (String alias : comp.commands()) {
@@ -209,7 +210,7 @@ public class CommandFramework implements CommandExecutor {
                     BukkitCompleter completer = (BukkitCompleter) field.get(command);
                     completer.addCompleter(label, m, obj);
                 } else {
-                    System.out.println("Unable to register tab completer " + m.getName()
+                    plugin.getLogger().warning("Unable to register tab completer " + m.getName()
                             + ". A tab completer is already registered for that command!");
                 }
             } catch (Exception ex) {
