@@ -96,8 +96,7 @@ public class CommandFramework implements CommandExecutor {
                     return true;
                 }
                 try {
-                    method.invoke(methodObject, new CommandArgs(sender, cmd, label, args,
-                            cmdLabel.split("\\.").length - 1));
+                    method.invoke(methodObject, sender, label, args);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -108,7 +107,7 @@ public class CommandFramework implements CommandExecutor {
                 return true;
             }
         }
-        defaultCommand(new CommandArgs(sender, cmd, label, args, 0));
+        defaultCommand(sender, label, args);
         return true;
     }
 
@@ -122,7 +121,8 @@ public class CommandFramework implements CommandExecutor {
         for (Method m : obj.getClass().getMethods()) {
             if (m.getAnnotation(Command.class) != null) {
                 Command command = m.getAnnotation(Command.class);
-                if (m.getParameterTypes().length > 1 || m.getParameterTypes()[0] != CommandArgs.class) {
+                if (m.getParameterTypes().length > 1 || (m.getParameterTypes()[0] != CommandSender.class
+                        && m.getParameterTypes()[1] != String.class && m.getParameterTypes()[2] != String[].class)) {
                     System.out.println("Unable to register command " + m.getName() + ". Unexpected method arguments");
                     continue;
                 }
@@ -132,8 +132,9 @@ public class CommandFramework implements CommandExecutor {
                 }
             } else if (m.getAnnotation(TabComplete.class) != null) {
                 TabComplete comp = m.getAnnotation(TabComplete.class);
-                if (m.getParameterTypes().length > 1 || m.getParameterTypes().length == 0
-                        || m.getParameterTypes()[0] != CommandArgs.class) {
+                if (m.getParameterTypes().length > 1 || m.getParameterTypes().length == 0 || (m.getParameterTypes()
+                        [0] != CommandSender.class && m.getParameterTypes()[1] != String.class
+                        && m.getParameterTypes()[2] != String[].class)) {
                     System.out.println("Unable to register tab completer " + m.getName()
                             + ". Unexpected method arguments");
                     continue;
@@ -215,7 +216,7 @@ public class CommandFramework implements CommandExecutor {
         }
     }
 
-    private void defaultCommand(CommandArgs args) {
-        args.getSender().sendMessage(args.getLabel() + " is not handled! Oh noes!");
+    private void defaultCommand(CommandSender sender, String commandLabel, String[] args) {
+        sender.sendMessage(commandLabel + " is not handled! Oh noes!");
     }
 }
