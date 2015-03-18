@@ -23,7 +23,7 @@ public @interface Command {
      *
      * @return
      */
-    String[] aliases() default {};
+    String[] aliases();
 
     /**
      * The parent command, for creating sub-command structures
